@@ -5,12 +5,6 @@ VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonApp", "PythonApp\PythonApp.pyproj", "{C7EE695B-B28C-4C16-98CA-E6D4C1B713F8}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "FlaskWeb", "FlaskWeb\FlaskWeb.pyproj", "{04D58F34-252B-4610-9136-91ED39E43096}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "BottleWeb", "BottleWeb\BottleWeb.pyproj", "{9499FA73-E653-475F-AD89-987BA91C9388}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DjangoWeb", "DjangoWeb\DjangoWeb.pyproj", "{E2D4A00D-A0DE-42DC-8336-B12FC9F88440}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,18 +13,6 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C7EE695B-B28C-4C16-98CA-E6D4C1B713F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C7EE695B-B28C-4C16-98CA-E6D4C1B713F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{04D58F34-252B-4610-9136-91ED39E43096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{04D58F34-252B-4610-9136-91ED39E43096}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{04D58F34-252B-4610-9136-91ED39E43096}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{04D58F34-252B-4610-9136-91ED39E43096}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9499FA73-E653-475F-AD89-987BA91C9388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9499FA73-E653-475F-AD89-987BA91C9388}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9499FA73-E653-475F-AD89-987BA91C9388}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9499FA73-E653-475F-AD89-987BA91C9388}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E2D4A00D-A0DE-42DC-8336-B12FC9F88440}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E2D4A00D-A0DE-42DC-8336-B12FC9F88440}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E2D4A00D-A0DE-42DC-8336-B12FC9F88440}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E2D4A00D-A0DE-42DC-8336-B12FC9F88440}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
