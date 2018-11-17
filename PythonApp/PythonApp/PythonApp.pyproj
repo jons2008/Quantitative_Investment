@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>c7ee695b-b28c-4c16-98ca-e6d4c1b713f8</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>PythonApp.py</StartupFile>
+    <StartupFile>module3.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,13 +22,15 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="module3.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="New\class1.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="New\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PythonApp.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.7" />
