@@ -1,0 +1,639 @@
+# 导入函数库
+from jqdata import *
+import talib
+# 初始化函数，设定基准等等
+def  select_strategy():
+    # 规则配置list下标描述变量。提高可读性与未来添加更多规则配置。
+    g.cs_enabled,g.cs_memo,g.cs_class_name,g.cs_param = range(4)
+
+    g.pick_stock_by_query_config = [
+        [True,'跟随策略',Recognition_Rise_Follow,{}],
+        [True,'超跌反弹',Recognition_Rise_OverfallBounce,{}],
+        [True,'一阳串两线',Recognition_Rise_A_String_Of_Two_Lines,{}],
+    ]
+def create_rule(class_type,params,memo):
+    obj = class_type(params)
+    #obj.on_open_position = open_position    # 买股
+    #obj.on_close_position = close_position  # 卖股
+    #obj.on_clear_position = clear_position  # 清仓
+    #obj.on_get_obj_by_class_type = get_obj_by_class_type # 通过类名得到类的实例
+    obj.memo = memo
+    return obj
+# 根据规则配置创建规则执行器
+def create_rules(config):
+    # config里 0.是否启用，1.描述，2.规则实现类名，3.规则传递参数(dict)]
+    for c in config:
+        print(c[g.cs_class_name])
+        print(c[g.cs_param])
+        print(c[g.cs_memo])
+    return [create_rule(c[g.cs_class_name],c[g.cs_param],c[g.cs_memo]) for c in config if c[g.cs_enabled]]
+
+def initialize(context):
+    set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
+    set_option('use_real_price', True)
+    g.buy_stock_count = 3
+    g.buy_stock_pool=3
+    g.stop_loss=0.98
+    #Recognition_Rise_OverfallBounce策略的卖出参数
+    g.positions_stock_Name = []
+    g.positions_stock_Stoploss_Price=[]
+    g.positions_stock_MAX_Price=[]
+    #那个策略有效
+    g.Is_Recognition_Rise_OverfallBounce=False
+    g.Recognition_Rise_Follow=False
+    # 设置BOLL波动系数
+    g.dev = 2
+    g.buy_stocks=[]
+    set_benchmark('399678.XSHE')
+    ## 运行函数（reference_security为运行时间的参考标的；传入的标的只做种类区分，因此传入'000300.XSHG'或'510300.XSHG'是一样的）
+      # 开盘前运行
+    run_daily(before_market_open, time='before_open', reference_security='399678.XSHE') 
+      # 开盘时运行
+    #run_daily(market_open, '9:35', reference_security='000300.XSHG')
+      # 收盘后运行
+    run_daily(after_market_close, time='after_close', reference_security='399678.XSHE')
+    
+    select_strategy()
+
+    g.pick_stock_by_query_rules = create_rules(g.pick_stock_by_query_config)
+    g.all_rules = list(set(
+             g.pick_stock_by_query_rules
+        ))
+    g.stock_list=[]
+    g.buy_stock_list=[]
+    g.Current_State=""
+    g.typeSelect=0
+    
+def handle_data(context, data):
+    market_open(context,data)
+## 开盘前运行函数     
+def before_market_open(context):
+    if not g.Recognition_Rise_Follow:
+        Implement_Recognition_Rise_OverfallBounce(context)
+#超跌反弹Recognition_Rise_OverfallBounce
+def Implement_Recognition_Rise_OverfallBounce(context):
+    if len(g.positions_stock_Name)==0:
+        if len(context.portfolio.positions)>0:
+            for stock in context.portfolio.positions.keys():
+                g.positions_stock_Name.append(stock)
+                price=attribute_history(stock, 1, '1d', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                if context.portfolio.positions[stock].acc_avg_cost*1.03<price[-1]:
+                    g.positions_stock_Stoploss_Price.append(context.portfolio.positions[stock].acc_avg_cost+(price[-1]-context.portfolio.positions[stock].acc_avg_cost)*0.5)
+                    max_price=attribute_history(stock, 1, '1d', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                    g.positions_stock_MAX_Price.append(price[-1])
+                else:
+                    if context.portfolio.positions[stock].acc_avg_cost*1.03>=price[-1] and context.portfolio.positions[stock].acc_avg_cost<price[-1]:
+                        g.positions_stock_Stoploss_Price.append(context.portfolio.positions[stock].acc_avg_cost+0.02)
+                    else:
+                        g.positions_stock_Stoploss_Price.append(context.portfolio.positions[stock].acc_avg_cost*0.975)
+                    max_price=attribute_history(stock, 1, '1d', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                    g.positions_stock_MAX_Price.append(context.portfolio.positions[stock].acc_avg_cost)
+    if len(g.positions_stock_Name)>0:   
+        if len(context.portfolio.positions)>0:
+            for stock in context.portfolio.positions.keys():
+                try:
+                    index=g.positions_stock_Name.index(stock)
+                    #print(index)
+                    
+                    price=attribute_history(stock, 1, '1d', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                    if price[-1]>g.positions_stock_MAX_Price[index]:
+                        g.positions_stock_MAX_Price[index]=price[-1]
+                        g.positions_stock_Stoploss_Price[index]=g.positions_stock_Stoploss_Price[index]+(g.positions_stock_MAX_Price[index]-g.positions_stock_Stoploss_Price[index])*0.5
+                except:
+                    g.positions_stock_Name.append(stock)
+                    price=attribute_history(stock, 1, '1d', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                    if context.portfolio.positions[stock].acc_avg_cost*1.03<price[-1]:
+                        g.positions_stock_Stoploss_Price.append(context.portfolio.positions[stock].acc_avg_cost+(price[-1]-context.portfolio.positions[stock].acc_avg_cost)*0.5)
+                        max_price=attribute_history(stock, 1, '1d', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                        g.positions_stock_MAX_Price.append(price[-1])
+                    else:
+                        if context.portfolio.positions[stock].acc_avg_cost*1.03>=price[-1] and context.portfolio.positions[stock].acc_avg_cost<price[-1]:
+                            g.positions_stock_Stoploss_Price.append(context.portfolio.positions[stock].acc_avg_cost+0.02)
+                        else:
+                            g.positions_stock_Stoploss_Price.append(context.portfolio.positions[stock].acc_avg_cost*0.975)
+                        max_price=attribute_history(stock, 1, '1d', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                        g.positions_stock_MAX_Price.append(context.portfolio.positions[stock].acc_avg_cost)
+            i=0
+            for stockname in g.positions_stock_Name:
+                print("股票："+stockname)
+                print("止赢止损："+str(g.positions_stock_Stoploss_Price[i]))
+                i=i+1
+## 开盘时运行函数
+def market_open(context,data):
+    Set_Recognition(context)
+    Get_Recognition_Rise(context,data)
+    pass
+
+def Set_Recognition(context):
+    hour = context.current_dt.hour
+    minute = context.current_dt.minute
+    Tcc=Trend_Continued_Choice()
+    if hour == 9 and minute == 31:
+        if not g.Recognition_Rise_Follow:
+            Clearing_House(context)
+    if hour == 9 and minute == 55:
+        if Tcc.get_growth_rate("399678.XSHE",10) > 0.01:
+            g.Recognition_Rise_Follow=True
+            
+#买卖
+def Get_Recognition_Rise(context,data):
+    for rule in g.all_rules:
+        rule.Is_Fall_Recognition_Rise(context,data)
+        rule.Is_Pattern_Recognition_Rise(context,data)
+
+## 收盘后运行函数  
+def after_market_close(context):
+    #log.info('##############################################################')
+    #log.info('一天结束')
+    #log.info('##############################################################')
+    pass
+#清仓策略 指数开盘跌幅超过3%
+def Clearing_House(context):
+    Index_Prices = get_bars('399678.XSHE', 20, '1m', fields=['close'],include_now=True)
+    Index_Prices_Old=attribute_history('399678.XSHE', 1, '1d', ('close'),fq='pre')['close'].values
+    if Index_Prices['close'][-1]<Index_Prices_Old[-1]*0.98:
+        if len(context.portfolio.positions)>0:
+            last_prices = history(1, '1m', 'close', security_list=context.portfolio.positions.keys())
+            for stock in context.portfolio.positions.keys():
+                    curr_data = get_current_data()
+                    if last_prices[stock][-1] < curr_data[stock].high_limit:
+                        order_target_value(stock, 0)
+                        g.positions_stock_Name= []
+                        g.positions_stock_Stoploss_Price= []
+                        g.positions_stock_MAX_Price= []
+
+def Close_Stock(context):
+    if len(context.portfolio.positions)>0:
+        for stock in context.portfolio.positions.keys():
+            order_target_value(stock, 0)
+        g.positions_stock_Name= []
+        g.positions_stock_Stoploss_Price= []
+        g.positions_stock_MAX_Price= []   
+#判断模型
+class Recognition_Rise():
+    def __init__(self,params):
+        pass
+    #买入模型
+    def Is_Pattern_Recognition_Rise(self,context,data):
+        pass
+    #下跌模型
+    def Is_Fall_Recognition_Rise(self,context,data):
+        pass
+'''
+创建跟随策略
+创建时间：2018.11.6
+'''
+#跟随策略
+class Recognition_Rise_Follow(Recognition_Rise):
+   
+    def __init__(self,paramscontext):
+        pass
+    #买入模型
+    def Is_Pattern_Recognition_Rise(self,context,data):
+        hour = context.current_dt.hour
+        minute = context.current_dt.minute
+        if g.Recognition_Rise_Follow:
+            #log.info(" 跟随开始")
+            if hour == 9 and minute == 55:
+                Tcc=Trend_Continued_Choice()
+                if Tcc.get_growth_rate('399678.XSHE',10) > 0.01 and self.choose('399678.XSHE'):
+                    list_stock=self.select_stocks(context,data)
+                    for stock in list_stock:
+                        position_count = len(context.portfolio.positions)
+                        if g.buy_stock_count > position_count:
+                            value = context.portfolio.cash / (g.buy_stock_count - position_count)
+                            if context.portfolio.positions[stock].total_amount == 0:
+                                order_target_value(stock, value)
+                                log.info("买入"+str(stock))
+                    log.info("符合条件不执行后面的策略")
+    ''' -------------------判断是否满足条件-----------------------------------------'''   
+    def choose(self,stock):
+        DIF, DEA, macd = self.MACD(stock)
+       
+        if  DIF[-1] > DIF[-2] :
+           return True
+        False
+    
+    ''' -------------------获取MACD数据，有增加当日数据-----------------------------------------'''   
+    def MACD(self,stock):
+        prices = attribute_history(stock, 60, '60m', ('close'),fq='pre')['close'].values
+        # 增加当日数据去计算
+        cur_prices = attribute_history(stock, 1, '1m', ('close'),fq='pre')['close'].values
+        prices += cur_prices
+        #prices=get_bars(stock, 60, '60m', fields=['close'],include_now=True)
+        DIF, DEA, macd = talib.MACD(prices, 
+                                        fastperiod=14, 
+                                        slowperiod=39, 
+                                        signalperiod=6)
+        return DIF, DEA, macd
+    def Is_Fall_Recognition_Rise(self,context,data):
+        hour = context.current_dt.hour
+        minute = context.current_dt.minute
+        if g.Recognition_Rise_Follow:
+            if hour == 9 and minute == 55:
+                Tcc=Trend_Continued_Choice()
+                if len(context.portfolio.positions)>0:
+                    last_prices = history(1, '1m', 'close', security_list=context.portfolio.positions.keys())
+                    list_stock=self.select_stocks(context,data)
+                    for stock in context.portfolio.positions.keys():
+                        if stock not in list_stock :
+                            curr_data = get_current_data()
+                            if last_prices[stock][-1] < curr_data[stock].high_limit:
+                                order_target_value(stock, 0)
+                                #log.info("卖出last_prices[stock][-1] < curr_data[stock].high_limit——"+str(stock))
+                                g.positions_stock_Name= []
+                                g.positions_stock_Stoploss_Price= []
+                                g.positions_stock_MAX_Price= []
+                        elif Tcc.get_growth_rate('399678.XSHE',10) < 0.01:
+                            order_target_value(stock, 0)
+                            g.Recognition_Rise_Follow=False
+                            #log.info('跟随结束')
+                            g.positions_stock_Name= []
+                            g.positions_stock_Stoploss_Price= []
+                            g.positions_stock_MAX_Price= []
+                elif Tcc.get_growth_rate('399678.XSHE',10) < 0.01:
+                            g.Recognition_Rise_Follow=False
+                            #log.info('跟随结束')
+                            g.positions_stock_Name= []
+                            g.positions_stock_Stoploss_Price= []
+                            g.positions_stock_MAX_Price= []
+    def select_stocks(self,context,data):
+        # 选取流通市值小于100亿的100只股票
+        q = query(valuation.code,valuation.circulating_market_cap).order_by(
+                valuation.circulating_market_cap.asc()).filter(
+                valuation.circulating_market_cap <=100).limit(300)
+        df = get_fundamentals(q)
+        stock_list = list(df['code'])
+        SelectStock=Select_Stocks_Basics()
+        # 过滤掉停牌的和ST的
+        stock_list = SelectStock.filter_paused_and_st_stock(stock_list)
+        #过滤掉创业板
+        stock_list = SelectStock.filter_gem_stock(context, stock_list)
+        # 过滤掉上市超过1年的
+        stock_list = SelectStock.filter_old_stock(context, stock_list)
+        # 过滤掉现在涨停或者跌停的
+        #stock_list = filter_limit_stock(context, stock_list)
+        stock_list = SelectStock.filter_limit_stock(context, data, stock_list)
+        
+        # 选取前N只股票放入“目标池”
+        stock_list = stock_list[:g.buy_stock_pool]  
+    
+        return stock_list
+'''
+抄底反弹
+创建时间：2018.11.6
+
+'''
+class Recognition_Rise_OverfallBounce(Recognition_Rise):
+    def __init__(self,paramscontext):
+        pass
+        #买入模型
+    def Is_Pattern_Recognition_Rise(self,context,data):
+        if not g.Recognition_Rise_Follow:
+            
+            hour = context.current_dt.hour
+            minute = context.current_dt.minute
+            if hour == 9 and minute > 55 and minute<60:
+                #log.info("BOLL抄底反弹策略买")
+                list_stock=self.select_stocks(context,data)
+                self.adjust_position_Boll(context, list_stock)
+            elif hour == 10 and minute >20 and minute<30:
+                #log.info("BOLL抄底反弹策略买")
+                list_stock=self.select_stocks(context,data)
+                self.adjust_position_Boll(context, list_stock)
+            elif hour == 10 and minute > 50 and minute<60:
+                #log.info("BOLL抄底反弹策略买")
+                list_stock=self.select_stocks(context,data)
+                self.adjust_position_Boll(context, list_stock)
+            elif hour == 11 and minute > 20 and minute<30:
+                #log.info("BOLL抄底反弹策略买")
+                list_stock=self.select_stocks(context,data)
+                self.adjust_position_Boll(context, list_stock)
+            elif hour == 13 and minute > 20 and minute<30:
+                #log.info("BOLL抄底反弹策略买")
+                list_stock=self.select_stocks(context,data)
+                self.adjust_position_Boll(context, list_stock)
+            elif hour == 13 and minute >50 and minute<60:
+                #log.info("BOLL抄底反弹策略买")
+                list_stock=self.select_stocks(context,data)
+                self.adjust_position_Boll(context, list_stock)
+            elif hour == 14 and minute >20 and minute<30:
+                #log.info("BOLL抄底反弹策略买")
+                list_stock=self.select_stocks(context,data)
+                self.adjust_position_Boll(context, list_stock)
+            elif hour == 14 and minute >50 and minute<60:
+                #log.info("BOLL抄底反弹策略买")
+                list_stock=self.select_stocks(context,data)
+                self.adjust_position_Boll(context, list_stock)
+        
+    #卖出模型
+    def  Is_Fall_Recognition_Rise(self,context,data):
+        if not g.Recognition_Rise_Follow:
+            hour = context.current_dt.hour
+            minute = context.current_dt.minute
+            if hour == 9 and minute > 55 and minute<60:
+                self.Sell_Position_Boll(context)
+            if hour == 10 and minute >20 and minute<30:
+                self.Sell_Position_Boll(context)
+            if hour == 10 and minute > 50 and minute<60:
+                self.Sell_Position_Boll(context)
+            if hour == 11 and minute > 20 and minute<30:
+                self.Sell_Position_Boll(context)
+            if hour == 13 and minute > 20 and minute<30:
+                self.Sell_Position_Boll(context)
+            if hour == 13 and minute >50 and minute<60:
+                self.Sell_Position_Boll(context)
+            if hour == 14 and minute >20 and minute<30:
+                self.Sell_Position_Boll(context)
+            if hour == 14 and minute >50 and minute<60:
+                self.Sell_Position_Boll(context)
+            
+    def adjust_position_Boll(self,context, buy_stocks):
+        Tcc=Trend_Continued_Choice()
+       #买入股票
+        if Tcc.get_growth_rate('399678.XSHE',1) > 0.005:
+            for stock in buy_stocks:
+                position_count = len(context.portfolio.positions)
+                if g.buy_stock_count > position_count:
+                    value = context.portfolio.cash / (g.buy_stock_count - position_count)
+                    if context.portfolio.positions[stock].total_amount == 0:
+                        last_prices = attribute_history(stock, 1, '1m', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                        if value>last_prices[-1]*100:
+                            order_target_value(stock, value)
+        #print (g.stocklists)
+    def Sell_Position_Boll(self,context):
+        if len(context.portfolio.positions)>0:
+            for stock in context.portfolio.positions.keys():
+                last_prices = attribute_history(stock, 1, '1m', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                curr_data = get_current_data()
+                try:
+                    index=g.positions_stock_Name.index(stock)
+                    if not self.Buy_Select_stock(context,stock):
+                        if last_prices[-1] < g.positions_stock_Stoploss_Price[index]:
+                            order_target_value(stock, 0)
+                            del g.positions_stock_Name[index]
+                            del g.positions_stock_Stoploss_Price[index]
+                            del g.positions_stock_MAX_Price[index]
+                except:
+                    pass
+    def select_stocks(self,context,data):
+        Tcc=Select_Stocks_Basics()
+        # 选取流通市值小于100亿的100只股票
+        q = query(valuation.code,valuation.circulating_market_cap,indicator.net_profit_to_total_revenue).order_by(
+                valuation.circulating_market_cap.asc()).filter(
+                    #indicator.net_profit_to_total_revenue>10,
+                valuation.circulating_market_cap <=100).limit(100)
+        df = get_fundamentals(q)
+        stock_list = list(df['code'])
+        
+        # 过滤掉停牌的和ST的
+        stock_list = Tcc.filter_paused_and_st_stock(stock_list)
+        #过滤掉创业板
+        #stock_list = filter_gem_stock(context, stock_list)
+        # 过滤掉上市超过1年的
+        stock_list = Tcc.filter_old_stock(context, stock_list)
+        # 过滤掉现在涨停或者跌停的
+        #stock_list = filter_limit_stock(context, stock_list)
+        stock_list = Tcc.filter_limit_stock(context, data, stock_list)
+            
+        stock_list= self.filter_choose_stock(context,stock_list)
+        
+        stock_list = stock_list[:g.buy_stock_pool]
+        return stock_list
+        
+    def filter_choose_stock(self,context,stock_list):
+        stocklist=[]
+        for x in stock_list:
+            if self.Buy_Select_stock(context,x):
+                stocklist.append(x)
+        return stocklist;
+    
+    ''' -------------------股票判断是否满足条件-----------------------------------------'''   
+    def Buy_Select_stock(self,context,stock):
+    
+        if self.BOLL_Select_stock30_60(stock):
+            return True
+        
+        False
+    #抄底
+    def BOLL_Select_stock30_60(self,stock):
+        upperband60, middleband60, lowerband60,prices_close60,prices_low60,prices_open60=self.get_boll(stock,'60m')
+        upperband30, middleband30, lowerband30,prices_close30,prices_low30,prices_open30=self.get_boll(stock,'30m')
+        if prices_close30>lowerband30>prices_low30 and prices_close60>lowerband60>prices_low60:
+            return True
+       #if lowerband30>prices_close30>prices_open30>prices_low30 and lowerband60>prices_close60>prices_open60>prices_low60:
+       #    return True
+        False
+    ''' -------------------获取BOLL数据，有增加当日30m数据-----------------------------------------'''   
+    def get_boll(self,stock,cycle):
+        # 当月合约价格
+        #future_close = history(win, '1d', 'close', future)[future]
+        prices = get_bars(stock, 20, cycle, fields=['low','close','open'],include_now=True)
+        #print("股票名称："+str(stock))
+        #print(priceslist)
+        # 计算过去20日的移动平均线作为中轨
+        mid=np.mean(prices['close'])
+        # 计算昨日20日的标准差
+        std=np.std(prices['close'])
+        #用up来保存昨日的上轨线
+        up=mid+g.dev*std
+        #用down来保存昨日的下轨线
+        down=mid-g.dev*std
+        return up,mid,down,prices['close'][-1],prices['low'][-1],prices['open'][-1]
+class Select_Stocks_Basics():
+    # 过滤掉停牌的和ST的
+    def filter_paused_and_st_stock(self,stock_list):
+        current_data = get_current_data()
+        return [stock for stock in stock_list if not current_data[stock].paused 
+        and not current_data[stock].is_st and 'ST' not in current_data[stock].
+        name and '*' not in current_data[stock].name and '退' not in current_data[stock].name]
+    # 过滤创业版
+    def filter_gem_stock(self,context, stock_list):
+        return [stock for stock in stock_list  if stock[0:3] != '300']
+    # 过滤掉上市超过1年的
+    def filter_old_stock(self,context, stock_list):
+        tmpList = []
+        for stock in stock_list :
+            days_public=(context.current_dt.date() - get_security_info(stock).start_date).days
+            # 上市未超过1年
+            if days_public < 365:
+                tmpList.append(stock)
+        return tmpList
+    # 过滤掉现在涨停或者跌停的   
+    def filter_limit_stock(self,context, data, stock_list):
+        tmpList = []
+        curr_data = get_current_data()
+        for stock in stock_list:
+            # 未涨停，也未跌停
+            if curr_data[stock].low_limit < data[stock].close < curr_data[stock].high_limit:
+                tmpList.append(stock)
+        return tmpList
+'''
+2018.11.06更新：
+        添加一阳串两线
+        说明：
+                1、当指数下跌反弹的一阳串两线的时候找出和指数走势一样的股票进行买入操作
+                2、当符合止盈止损的时候卖出股票
+'''
+#一阳串两线战法
+class Recognition_Rise_A_String_Of_Two_Lines(Recognition_Rise):
+    def __init__(self,paramscontext):
+        pass
+        #买入模型
+    def Is_Pattern_Recognition_Rise(self,context,data):
+        if not g.Recognition_Rise_Follow:
+            hour = context.current_dt.hour
+            minute = context.current_dt.minute
+            if hour == 14 and minute >50 and minute<60:
+                list_stock=self.select_stocks(context,data)
+                self.adjust_position_Boll(context, list_stock)
+            
+    #卖出模型
+    def  Is_Fall_Recognition_Rise(self,context,data):
+        if not g.Recognition_Rise_Follow:
+            hour = context.current_dt.hour
+            minute = context.current_dt.minute 
+            if hour == 9 and minute > 55 and minute<60:
+                self.Sell_Position_Boll(context)
+            if hour == 10 and minute >20 and minute<30:
+                self.Sell_Position_Boll(context)
+            if hour == 10 and minute > 50 and minute<60:
+                self.Sell_Position_Boll(context)
+            if hour == 11 and minute > 20 and minute<30:
+                self.Sell_Position_Boll(context)
+            if hour == 13 and minute > 20 and minute<30:
+                self.Sell_Position_Boll(context)
+            if hour == 13 and minute >50 and minute<60:
+                self.Sell_Position_Boll(context)
+            if hour == 14 and minute >20 and minute<30:
+                self.Sell_Position_Boll(context)
+            if hour == 14 and minute >50 and minute<60:
+                self.Sell_Position_Boll(context)
+        
+    def adjust_position_Boll(self,context, buy_stocks):
+        Tcc=Trend_Continued_Choice()
+        for stock in buy_stocks:
+            position_count = len(context.portfolio.positions)
+            if g.buy_stock_count > position_count:
+                value = context.portfolio.cash / (g.buy_stock_count - position_count)
+                if context.portfolio.positions[stock].total_amount == 0:
+                    last_prices = attribute_history(stock, 1, '1m', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                    if value>last_prices[-1]*100:
+                        order_target_value(stock, value)
+        #print (g.stocklists)
+    def Sell_Position_Boll(self,context):
+        if len(context.portfolio.positions)>0:
+            for stock in context.portfolio.positions.keys():
+                last_prices = attribute_history(stock, 1, '1m', ('close'),skip_paused=True, df=True, fq='pre')['close'].values
+                curr_data = get_current_data()
+                try:
+                    index=g.positions_stock_Name.index(stock)
+                    if last_prices[-1] < g.positions_stock_Stoploss_Price[index]:
+                        order_target_value(stock, 0)
+                        del g.positions_stock_Name[index]
+                        del g.positions_stock_Stoploss_Price[index]
+                        del g.positions_stock_MAX_Price[index]
+                except:
+                    pass
+    def select_stocks(self,context,data):
+        Tcc=Select_Stocks_Basics()
+        # 选取流通市值小于100亿的100只股票
+        q = query(valuation.code,valuation.circulating_market_cap,indicator.net_profit_to_total_revenue).order_by(
+                valuation.circulating_market_cap.asc()).filter(
+                    #indicator.net_profit_to_total_revenue>10,
+                valuation.circulating_market_cap <=1000).limit(1000)
+        df = get_fundamentals(q)
+        stock_list = list(df['code'])
+        
+        # 过滤掉停牌的和ST的
+        stock_list = Tcc.filter_paused_and_st_stock(stock_list)
+        #过滤掉创业板
+        stock_list = Tcc.filter_gem_stock(context, stock_list)
+        # 过滤掉上市超过1年的
+        stock_list = Tcc.filter_old_stock(context, stock_list)
+        # 过滤掉现在涨停或者跌停的
+        #stock_list = filter_limit_stock(context, stock_list)
+        stock_list = Tcc.filter_limit_stock(context, data, stock_list)
+            
+        stock_list= self.filter_choose_stock(stock_list)
+        
+        stock_list = stock_list[:g.buy_stock_pool]
+        return stock_list
+        
+    def filter_choose_stock(self,stock_list):
+        stocklist=[]
+        if self.Is_choose_stock('399678.XSHE'):
+            for stock in stock_list:
+                if self.Is_choose_stock(stock):
+                    stocklist.append(stock)
+        return stocklist
+    def Is_choose_stock(self,stock):
+        Index_Prices5 = get_bars(stock,5, '1d', fields=['close'],include_now=True)
+        MA5=Index_Prices5['close'].mean()
+        
+        Index_Prices10 = get_bars(stock,10, '1d', fields=['close'],include_now=True)
+        MA10=Index_Prices10['close'].mean()
+        
+        Index_Prices20 = get_bars(stock,20, '1d', fields=['close'],include_now=True)
+        MA20=Index_Prices20['close'].mean()
+        
+        Index_Prices60 = get_bars(stock,60, '1d', fields=['close'],include_now=True)
+        MA60=Index_Prices60['close'].mean()
+        Index_Prices = get_bars(stock,5, '1d', fields=['close','low','open'],include_now=True)
+        if Index_Prices['close'][-1]>MA5 and  Index_Prices['close'][-1]>MA10:
+            if (Index_Prices['low'][-1]<MA5 and Index_Prices['low'][-1]<MA10) or (Index_Prices['close'][-2]<MA5 and  Index_Prices['close'][-2]<MA10):
+                if MA60>MA20>MA10 and MA60>MA20>MA5:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+#趋势判断
+class Trend_Continued_Choice():
+    # 获取股票n日以来涨幅，根据当前价计算
+    # n 默认20日
+    def get_growth_rate(self,security, n):
+        lc = self.get_close_price(security, n)
+        #c = data[security].close
+        c = self.get_close_price(security, 1, '1m')
+    
+        if not isnan(lc) and not isnan(c) and lc != 0:
+            return (c - lc) / lc
+        else:
+            log.error("数据非法, security: %s, %d日收盘价: %f, 当前价: %f" %(security, n, lc, c))
+            return 0
+    # 获取前n个单位时间当时的收盘价
+    def get_close_price(self,security, n, unit='1d'):
+        return attribute_history(security, n, unit, ('close'), True)['close'][0]
+        
+    #下跌趋势
+    def Fall_Trend_Continued(self,stock):
+        close_data5 = attribute_history(stock, 5, '1d', ['close'])
+        # 取得过去五天的平均价格
+        MA5 = close_data5['close'].mean()
+        close_data20 = attribute_history(stock, 20, '1d', ['close'])
+        # 取得过去五天的平均价格
+        MA20 = close_data20['close'].mean()
+        close_data60 = attribute_history(stock, 60, '1d', ['close'])
+        # 取得过去五天的平均价格
+        MA60 = close_data60['close'].mean()
+        if MA60>MA5 and close_data60['close'][-1]<MA60:
+            return True
+        False
+    #上涨趋势    
+    def Pattern_Trend_Continued(self,stock):
+        close_data5 = attribute_history(stock, 5, '1d', ['close'])
+        # 取得过去五天的平均价格
+        MA5 = close_data5['close'].mean()
+        close_data20 = attribute_history(stock, 20, '1d', ['close'])
+        # 取得过去五天的平均价格
+        MA20 = close_data20['close'].mean()
+        
+        close_data60 = attribute_history(stock, 60, '1d', ['close'])
+        # 取得过去五天的平均价格
+        MA60 = close_data60['close'].mean()
+        if MA60<MA5 and close_data60['close'][-1]>MA60:
+            return True
+        False
