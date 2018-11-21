@@ -1,14 +1,4 @@
-									  # 克隆自聚宽文章：https://www.joinquant.com/post/15002
-# 标题：兄台且慢，去天台排队不如看看这个策略先
-# 作者：K线放荡不羁
 
-'''
-策略思路：
-选股：财务指标选股
-择时：RSRS择时
-持仓：有开仓信号时持有10只股票，不满足时保持空仓
-
-'''
 # 导入函数库
 import statsmodels.api as sm
 from pandas.stats.api import ols

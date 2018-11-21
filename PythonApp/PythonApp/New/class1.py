@@ -5,16 +5,23 @@ from PyQt5.QtGui import *
 import tushare as ts
 class Table(QWidget):
     def __init__(self,parent=None):
-        df=ts.get_hist_data('600848')
+        
+        df = ts.get_hist_data('600848')
+        #直接保存
+        df.to_csv('c:/day/000875.csv')
+
+        #选择保存
+        df.to_csv('c:/day/000875.csv',columns=['open','high','low','close'])
+
         super(Table, self).__init__(parent)
         #设置标题与初始大小
         self.setWindowTitle('QTableView表格视图的例子')
         self.resize(500,300)
 
         #设置数据层次结构，4行4列
-        self.model=QStandardItemModel(0,4)
+        self.model=QStandardItemModel(0,5)
         #设置水平方向四个头标签文本内容
-        self.model.setHorizontalHeaderLabels(['日期','开盘价','最高价','收盘价'])
+        self.model.setHorizontalHeaderLabels(['date','open','high','close','volume'])
 
 
         # #Todo 优化2 添加数据
@@ -24,6 +31,7 @@ class Table(QWidget):
         #     QStandardItem('row %s,column %s' % (11,11)),
         #     QStandardItem('row %s,column %s' % (11,11)),
         # ])
+
         self.rowIndex=0
         self.columnIndex=0
         for row in df.index:
@@ -31,6 +39,8 @@ class Table(QWidget):
                 QStandardItem(row),
                 QStandardItem(str(df.loc[row]['open'])),
                 QStandardItem(str(df.loc[row]['high'])),
+                QStandardItem(str(df.loc[row]['close'])),
+                QStandardItem(str(df.loc[row]['volume'])),
                 ])
 
         #实例化表格视图，设置模型为自定义的模型
