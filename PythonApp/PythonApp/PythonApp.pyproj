@@ -31,11 +31,19 @@
     <Compile Include="New\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WinFromApp\Menu_From.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinFromApp\MainWindow.py" />
+    <Compile Include="WinFromApp\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.7" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="WinFromApp\" />
     <Folder Include="量化交易文件\" />
     <Folder Include="New\" />
   </ItemGroup>
