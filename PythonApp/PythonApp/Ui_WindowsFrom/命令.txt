@@ -1,0 +1,3 @@
+d:\
+cd\Python\Python37\Scripts
+pyuic5 -o F:\个人项目\Quantitative_Investment\PythonApp\PythonApp\Ui_WindowsFrom\MainWinFrom.py F:\个人项目\Quantitative_Investment\PythonApp\PythonApp\Ui_WindowsFrom\MainWinFrom.ui

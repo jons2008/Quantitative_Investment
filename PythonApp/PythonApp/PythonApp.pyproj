@@ -31,10 +31,15 @@
     <Compile Include="New\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinFromApp\Menu_From.py">
+    <Compile Include="Ui_WindowsFrom\OpenWindowsFrom.py" />
+    <Compile Include="Ui_WindowsFrom\__init__.py" />
+    <Compile Include="Ui_WindowsFrom\MainWinFrom.py" />
+    <Compile Include="WinFromApp\MainFrom.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinFromApp\MainWindow.py" />
+    <Compile Include="WinFromApp\OpenFrom.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="WinFromApp\__init__.py">
       <SubType>Code</SubType>
     </Compile>
@@ -43,12 +48,16 @@
     <InterpreterReference Include="Global|PythonCore|3.7" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Ui_WindowsFrom\" />
     <Folder Include="WinFromApp\" />
     <Folder Include="量化交易文件\" />
     <Folder Include="New\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="Ui_WindowsFrom\MainWinFrom.ui" />
+    <Content Include="Ui_WindowsFrom\OpenWindowsFrom.ui" />
+    <Content Include="Ui_WindowsFrom\命令.txt" />
     <Content Include="量化交易文件\次新股.txt" />
     <Content Include="量化交易文件\线性回归.txt" />
   </ItemGroup>
