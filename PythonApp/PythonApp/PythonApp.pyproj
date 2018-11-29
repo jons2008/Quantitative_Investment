@@ -22,6 +22,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Update_Data\CreateHistoricalData.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="module3.py">
       <SubType>Code</SubType>
     </Compile>
@@ -34,6 +37,7 @@
     <Compile Include="Ui_WindowsFrom\OpenWindowsFrom.py" />
     <Compile Include="Ui_WindowsFrom\__init__.py" />
     <Compile Include="Ui_WindowsFrom\MainWinFrom.py" />
+    <Compile Include="Update_Data\__init__.py" />
     <Compile Include="WinFromApp\MainFrom.py">
       <SubType>Code</SubType>
     </Compile>
@@ -48,6 +52,7 @@
     <InterpreterReference Include="Global|PythonCore|3.7" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Update_Data\" />
     <Folder Include="Ui_WindowsFrom\" />
     <Folder Include="WinFromApp\" />
     <Folder Include="量化交易文件\" />

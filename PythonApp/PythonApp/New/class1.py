@@ -7,19 +7,26 @@ from sqlalchemy import create_engine
 class Table(QWidget):
     def __init__(self,parent=None):
         
-        df = ts.get_hist_data('600848')
-        ##直接保存
-        #df.to_csv('c:/day/000875.csv')
+        #df = ts.get_hist_data('600848')
+        ###直接保存
+        ##df.to_csv('c:/day/000875.csv')
+        ##
+        ###选择保存
+        ##df.to_csv('c:/day/000875.csv',columns=['open','high','low','close'])
         #
-        ##选择保存
-        #df.to_csv('c:/day/000875.csv',columns=['open','high','low','close'])
-        
-        #df = ts.get_tick_data('600848', date='2014-12-22')
-        engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",
-                        encoding="utf-8",
-                        echo=True) 
-        #存入数据库
-        df.to_sql('tick_data',engine,if_exists='append')
+        ##df = ts.get_tick_data('600848', date='2014-12-22')
+        #engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
+        ##engine = create_engine('mysql://root:123456789@127.0.0.1:3306/testsql?charset=utf8')
+        #try:
+        #   df.to_sql('tick_data',engine)
+        ##存入数据库
+        #except:
+        #    try:
+        #        df.to_sql('tick_data',engine,if_exists='replace')
+        #    except:
+        #        df.to_sql('tick_data',engine,if_exists='append')
+        #
+
 
         super(Table, self).__init__(parent)
         #设置标题与初始大小
