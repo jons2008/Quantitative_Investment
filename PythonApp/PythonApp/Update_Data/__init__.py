@@ -1,1 +1,1 @@
-__all__ = ['CreateHistoricalData']
+__all__ = ['CreateHistoricalData','InsertHistoricalData']

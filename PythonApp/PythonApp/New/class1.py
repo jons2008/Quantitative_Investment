@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 class Table(QWidget):
     def __init__(self,parent=None):
         
-        #df = ts.get_hist_data('600848')
+        df = ts.get_hist_data('600848')
         ###直接保存
         ##df.to_csv('c:/day/000875.csv')
         ##

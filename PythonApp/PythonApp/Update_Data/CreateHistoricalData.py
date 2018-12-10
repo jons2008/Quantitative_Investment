@@ -7,10 +7,11 @@ class CreateHistoricalData():
         pass
 
     def Update_Stock_Data(self,code,start,end,ktype,retry_count=3,pause=0):
-        df=ts.get_profit_data(2014,3)
-        pass
-       #self.CREATE_TABLE(ktype,code)
-       #self.INSERT_TABLE(code,start,end,ktype)
+        #df=ts.get_profit_data(2014,3)
+        #pass
+        #for stock in df:
+        self.CREATE_TABLE(ktype,code)
+        self.INSERT_TABLE(code,start,end,ktype)
        #df = ts.get_hist_data(code,start,end,ktype)
        #engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
        ##存入数据库
