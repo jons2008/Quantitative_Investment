@@ -22,7 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Update_Data\CreateHistoricalData.py">
+    <Compile Include="Update_Data\HistoricalData\CreateHistoricalData.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="module3.py">
@@ -37,6 +37,13 @@
     <Compile Include="Ui_WindowsFrom\OpenWindowsFrom.py" />
     <Compile Include="Ui_WindowsFrom\__init__.py" />
     <Compile Include="Ui_WindowsFrom\MainWinFrom.py" />
+    <Compile Include="Update_Data\HistoricalData\DeleteHistoricaData.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Update_Data\HistoricalData\InsertHistoricalData.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Update_Data\HistoricalData\__init__.py" />
     <Compile Include="Update_Data\__init__.py" />
     <Compile Include="WinFromApp\MainFrom.py">
       <SubType>Code</SubType>
@@ -54,6 +61,7 @@
   <ItemGroup>
     <Folder Include="Update_Data\" />
     <Folder Include="Ui_WindowsFrom\" />
+    <Folder Include="Update_Data\HistoricalData\" />
     <Folder Include="WinFromApp\" />
     <Folder Include="量化交易文件\" />
     <Folder Include="New\" />
