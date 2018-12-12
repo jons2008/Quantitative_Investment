@@ -42,7 +42,7 @@ class CreateHistoricalData():
          return switcher[ktype](code)
     
     def Create_Table_D(self,code):  
-       #df = ts.get_hist_data(code)
+       df = ts.get_hist_data(code)
        engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
        #存入数据库
        try:
@@ -54,7 +54,7 @@ class CreateHistoricalData():
 
     
     def Create_Table_W(self):  
-       #df = ts.get_hist_data(code)
+       df = ts.get_hist_data(code)
        engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
        #存入数据库
        try:
@@ -64,7 +64,7 @@ class CreateHistoricalData():
        finally:
            pass
     def Create_Table_M(self): 
-       #df = ts.get_hist_data(code)
+       df = ts.get_hist_data(code)
        engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
        #存入数据库
        try:
@@ -74,7 +74,7 @@ class CreateHistoricalData():
        finally:
            pass
     def Create_Table_5(self): 
-       #df = ts.get_hist_data(code)
+       df = ts.get_hist_data(code)
        engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
        #存入数据库
        try:
@@ -84,7 +84,7 @@ class CreateHistoricalData():
        finally:
            pass
     def Create_Table_15(self):  
-       #df = ts.get_hist_data(code)
+       df = ts.get_hist_data(code)
        engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
        #存入数据库
        try:
@@ -94,7 +94,7 @@ class CreateHistoricalData():
        finally:
            pass
     def Create_Table_30(self):  
-       #df = ts.get_hist_data(code)
+       df = ts.get_hist_data(code)
        engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
        #存入数据库
        try:
@@ -104,7 +104,7 @@ class CreateHistoricalData():
        finally:
            pass
     def Create_Table_60(self): 
-       #df = ts.get_hist_data(code)
+       df = ts.get_hist_data(code)
        engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
        #存入数据库
        try:
