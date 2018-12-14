@@ -6,7 +6,7 @@ import pymysql
 import time
 HOSTNAME = "localhost"
 PORT = "3306"
-DATABASE = "testsql"
+DATABASE = "stock_historical_data"
 USERNAME = "root"
 PASSWORD = "123456789"
 mydb = pymysql.connect(

@@ -1,6 +1,18 @@
 import tushare as ts
 from sqlalchemy import create_engine
 import time
+import pymysql
+HOSTNAME = "localhost"
+PORT = "3306"
+DATABASE = "stock_historical_data"
+USERNAME = "root"
+PASSWORD = "123456789"
+mydb = pymysql.connect(
+  HOSTNAME,
+  USERNAME,
+  PASSWORD,
+  DATABASE
+)
 class CreateHistoricalData():
 
     def __init__(self,parent=None):
@@ -20,12 +32,32 @@ class CreateHistoricalData():
          pass
     
     def Create_Table_Historical_Data(self,ktype,code,retry_count,pause):  
-       df = ts.get_hist_data(code,retry_count=retry_count,pause=pause)
-       df["ktype"]=ktype
-       engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
+       #df = ts.get_hist_data(code,retry_count=retry_count,pause=pause)
+       #df["ktype"]=ktype
+       #engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
        #存入数据库
        try:
-          df.to_sql('Historical_Data_'+code,engine)
+            mycursor = mydb.cursor()
+            sql='CREATE TABLE IF NOT EXISTS `Historical_Data_'+code+'`('
+            sql=sql+'`date` VARCHAR(100),'
+            sql=sql+'`open` double(16,2),'
+            sql=sql+'`high` double(16,2),'
+            sql=sql+'`close` double(16,2),'
+            sql=sql+'`volume` double(16,2),'
+            sql=sql+'`low` double(16,2),'
+            sql=sql+'`price_change` double(16,2),'
+            sql=sql+'`p_change` double(16,2),'
+            sql=sql+'`ma5` double(16,2),'
+            sql=sql+'`ma10` double(16,2),'
+            sql=sql+'`ma20` double(16,2),'
+            sql=sql+'`v_ma5` double(16,2),'
+            sql=sql+'`v_ma10`double(16,2),'
+            sql=sql+'`v_ma20` double(16,2),'
+            sql=sql+'`ktype` VARCHAR(100)'
+            sql=sql+')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
+            #df.to_sql('Historical_Data_'+code,engine)
+            mycursor.execute(sql)
+            mydb.commit()
        except:
            pass
        finally:
