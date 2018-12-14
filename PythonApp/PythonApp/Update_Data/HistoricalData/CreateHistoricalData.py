@@ -14,7 +14,7 @@ mydb = pymysql.connect(
   DATABASE
 )
 class CreateHistoricalData():
-
+    
     def __init__(self,parent=None):
         pass
 
@@ -31,12 +31,8 @@ class CreateHistoricalData():
          #return switcher[ktype](code,ktype)
          pass
     
-    def Create_Table_Historical_Data(self,ktype,code,retry_count,pause):  
-       #df = ts.get_hist_data(code,retry_count=retry_count,pause=pause)
-       #df["ktype"]=ktype
-       #engine =create_engine("mysql+pymysql://root:123456789@localhost:3306/testsql",encoding="utf-8",echo=True) 
-       #存入数据库
-       try:
+    def Create_Table_Historical_Data(self,ktype,code):  
+        try:
             mycursor = mydb.cursor()
             sql='CREATE TABLE IF NOT EXISTS `Historical_Data_'+code+'`('
             sql=sql+'`date` VARCHAR(100),'
@@ -58,9 +54,10 @@ class CreateHistoricalData():
             #df.to_sql('Historical_Data_'+code,engine)
             mycursor.execute(sql)
             mydb.commit()
-       except:
+        except:
            pass
-       finally:
+        finally:
+           #mydb.close()
            pass
 
     

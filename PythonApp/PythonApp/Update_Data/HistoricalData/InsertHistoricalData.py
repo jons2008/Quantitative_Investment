@@ -16,23 +16,22 @@ mydb = pymysql.connect(
   DATABASE
 )
 class InsertHistoricalData():
-
     def __init__(self,parent=None):
         pass
-    def Insert_Historical_Data(self,code,start,end,ktype,retry_count=3,pause=0):
+    def Insert_Historical_Data(self,code,start,end,ktype):
         
         CreateTable=CreateHistoricalData()
         
-        CreateTable.Create_Table_Historical_Data(ktype=ktype,code=code,retry_count=retry_count,pause=pause)
+        CreateTable.Create_Table_Historical_Data(ktype=ktype,code=code)
         DelTable=DeleteHistoricaData.DeleteHistoricaData()
-        DelTable.Delete_TABLE(ktype=ktype,code=code,start=start,end=end)
-        self.INSERT_TABLE(code,start,end,ktype,retry_count,pause)
+        DelTable.Delete_Table(ktype=ktype,code=code,start=start,end=end)
+        self.INSERT_TABLE(code,start,end,ktype)
 
     def SET_Insert_TICK_DATA(self,code):
         self.INSERT_TODAY_TICKS(code)
 
-    def INSERT_TABLE(self,code,start,end,ktype,retry_count,pause):  
-       df = ts.get_hist_data(code,start,end,ktype,retry_count,pause)
+    def INSERT_TABLE(self,code,start,end,ktype):  
+       df = ts.get_hist_data(code,start,end,ktype)
        df["ktype"]=ktype
        try:
             mycursor = mydb.cursor()
