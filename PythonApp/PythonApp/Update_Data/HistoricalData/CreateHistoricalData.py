@@ -17,20 +17,6 @@ class CreateHistoricalData():
     
     def __init__(self,parent=None):
         pass
-
-    def CREATE_TABLE(self,ktype,code):
-         #switcher = {
-         #   'D':self.Create_Table_Historical_Data_
-         #   #'W':self.Create_Table_W,
-         #   #'M':self.Create_Table_M,
-         #   #'5':self.Create_Table_5,
-         #   #'15':self.Create_Table_15,
-         #   #'30':self.Create_Table_30,  
-         #   #'60':self.Create_Table_60,
-         #   }
-         #return switcher[ktype](code,ktype)
-         pass
-    
     def Create_Table_Historical_Data(self,ktype,code):  
         try:
             mycursor = mydb.cursor()

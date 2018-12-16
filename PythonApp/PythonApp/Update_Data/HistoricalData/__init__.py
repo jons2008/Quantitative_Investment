@@ -1,1 +1,1 @@
-__all__ = ['CreateHistoricalData','InsertHistoricalData','DeleteHistoricaData']
+__all__ = ['HistoricalData','HistoricalIndex','TodayTicks']
