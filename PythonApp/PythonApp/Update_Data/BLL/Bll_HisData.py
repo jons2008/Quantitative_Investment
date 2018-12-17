@@ -1,4 +1,4 @@
-from Update_Data.HistoricalData.HistoricalData import HistoricalData
+from Update_Data.DLL.HistoricalData.HistoricalData import HistoricalData
 import threading
 import tushare as ts
 class Bll_HisData():

@@ -22,9 +22,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Update_Data\Bll_HisData.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Update_Data\BLL\Bll_HisData.py" />
+    <Compile Include="Update_Data\BLL\Bll_HistoricalIndex.py" />
+    <Compile Include="Update_Data\BLL\Bll_PerformanceReport.py" />
+    <Compile Include="Update_Data\BLL\Bll_TodayTicks.py" />
     <Compile Include="module3.py">
       <SubType>Code</SubType>
     </Compile>
@@ -37,29 +38,14 @@
     <Compile Include="Ui_WindowsFrom\OpenWindowsFrom.py" />
     <Compile Include="Ui_WindowsFrom\__init__.py" />
     <Compile Include="Ui_WindowsFrom\MainWinFrom.py" />
-    <Compile Include="Update_Data\Bll_HistoricalIndex.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Update_Data\Bll_TodayTicks.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Update_Data\FundamentalsData\PerformanceReport.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Update_Data\FundamentalsData\__init__.py" />
-    <Compile Include="Update_Data\HistoricalData\HistoricalData.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Update_Data\HistoricalData\HistoricalIndex.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Update_Data\HistoricalData\TodayTicks.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Update_Data\HistoricalData\__init__.py" />
-    <Compile Include="Update_Data\Bll_PerformanceReport.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Update_Data\BLL\__init__.py" />
+    <Compile Include="Update_Data\DLL\FundamentalsData\PerformanceReport.py" />
+    <Compile Include="Update_Data\DLL\FundamentalsData\__init__.py" />
+    <Compile Include="Update_Data\DLL\HistoricalData\HistoricalData.py" />
+    <Compile Include="Update_Data\DLL\HistoricalData\HistoricalIndex.py" />
+    <Compile Include="Update_Data\DLL\HistoricalData\TodayTicks.py" />
+    <Compile Include="Update_Data\DLL\HistoricalData\__init__.py" />
+    <Compile Include="Update_Data\DLL\__init__.py" />
     <Compile Include="Update_Data\__init__.py" />
     <Compile Include="WinFromApp\MainFrom.py">
       <SubType>Code</SubType>
@@ -77,8 +63,10 @@
   <ItemGroup>
     <Folder Include="Update_Data\" />
     <Folder Include="Ui_WindowsFrom\" />
-    <Folder Include="Update_Data\HistoricalData\" />
-    <Folder Include="Update_Data\FundamentalsData\" />
+    <Folder Include="Update_Data\DLL\" />
+    <Folder Include="Update_Data\DLL\FundamentalsData\" />
+    <Folder Include="Update_Data\DLL\HistoricalData\" />
+    <Folder Include="Update_Data\BLL\" />
     <Folder Include="WinFromApp\" />
     <Folder Include="量化交易文件\" />
     <Folder Include="New\" />

@@ -1,4 +1,3 @@
-from Update_Data.HistoricalData.HistoricalIndex import HistoricalIndex
 
 class Bll_HistoricalIndex():
     def __init__(self,parent=None):

@@ -1,4 +1,4 @@
-from Update_Data.FundamentalsData.PerformanceReport import PerformanceReport
+from Update_Data.BLL.Bll_PerformanceReport import PerformanceReport
 class Bll_PerformanceReport():
     def __init__(self,parent=None):
         pass
