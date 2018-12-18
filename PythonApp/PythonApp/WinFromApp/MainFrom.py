@@ -17,6 +17,8 @@ class MainFrom(QMainWindow,Ui_MainWindow):
         #data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
         hitdata=View_TodayTicks()
         hitdata.Run()
+        dd=Run_Bll_HisData()
+        dd.Run_Insert_Historical_Data()
         #df = ts.get_stock_basics()
         #for stock in df.index:
         #    hitdata.Insert_Historical_Data(stock,str(time.strftime("%Y-%m-%d", time.localtime()) ))

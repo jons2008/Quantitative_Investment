@@ -43,13 +43,13 @@ class Run_Bll_HisData():
         for stock in df.index:
             threads = []
             # 创建新线程
-            thread1 = Thread_Bll_HisData(stock,'2005-12-09','2018-12-13','D')
-            thread2 = Thread_Bll_HisData(stock,'2005-12-09','2018-12-13','M')
-            thread3 = Thread_Bll_HisData(stock,'2005-12-09','2018-12-13','W')
-            thread4 = Thread_Bll_HisData(stock,'2005-12-09','2018-12-13','60')
-            thread5 = Thread_Bll_HisData(stock,'2005-12-09','2018-12-13','30')
-            thread6 = Thread_Bll_HisData(stock,'2005-12-09','2018-12-13','15')
-            thread7 = Thread_Bll_HisData(stock,'2005-12-09','2018-12-13','5')
+            thread1 = Thread_Bll_HisData(stock,'2018-12-17','2018-12-18','D')
+            thread2 = Thread_Bll_HisData(stock,'2018-12-17','2018-12-18','M')
+            thread3 = Thread_Bll_HisData(stock,'2018-12-17','2018-12-18','W')
+            thread4 = Thread_Bll_HisData(stock,'2018-12-17','2018-12-18','60')
+            thread5 = Thread_Bll_HisData(stock,'2018-12-17','2018-12-18','30')
+            thread6 = Thread_Bll_HisData(stock,'2018-12-17','2018-12-18','15')
+            thread7 = Thread_Bll_HisData(stock,'2018-12-17','2018-12-18','5')
             #thread8 = Thread_Today_Ticks(stock)
             # 开启新线程
             thread1.start()
