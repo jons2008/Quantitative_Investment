@@ -22,6 +22,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="module1.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Update_Data\BLL\Bll_HisData.py" />
     <Compile Include="Update_Data\BLL\Bll_HistoricalIndex.py" />
     <Compile Include="Update_Data\BLL\Bll_PerformanceReport.py" />
