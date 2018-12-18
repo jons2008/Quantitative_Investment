@@ -10,9 +10,10 @@ class Bll_HisData():
             CreateTable.Create(ktype=ktype,code=code)
             CreateTable.Delete(ktype=ktype,code=code,start=start,end=end)
             CreateTable.INSERT(code,start,end,ktype)
-            print("开始")
+            #print("开始")
         else:
-            print("已经有了"+str(code)+"属性:"+str(ktype))
+            pass
+            #print("已经有了"+str(code)+"属性:"+str(ktype))
     
 
 class Thread_Bll_HisData (threading.Thread):
@@ -40,7 +41,11 @@ class Run_Bll_HisData():
         pass
     def Run_Insert_Historical_Data(self):
         df = ts.get_stock_basics()
+        NumBar=0
         for stock in df.index:
+            NumBar=NumBar+1
+            print("股票代码："+str(stock))
+            print("数量："+str(NumBar))
             threads = []
             # 创建新线程
             thread1 = Thread_Bll_HisData(stock,'2018-12-17','2018-12-18','D')

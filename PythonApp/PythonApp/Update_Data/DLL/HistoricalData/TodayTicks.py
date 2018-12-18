@@ -65,7 +65,7 @@ class TodayTicks():
            try:
                mydb = pymysql.connect(HOSTNAME,USERNAME,PASSWORD,DATABASE)
                #time.sleep(1)
-               df = ts.get_today_ticks(code,retry_count=5)
+               df = ts.get_today_ticks(code,retry_count=20)
                if len(df)!=0:
                    df['data']=time.strftime("%Y-%m-%d", time.localtime()) 
                    mycursor = mydb.cursor()

@@ -15,8 +15,8 @@ class MainFrom(QMainWindow,Ui_MainWindow):
         ##查询当前所有正常上市交易的股票列表
         #
         #data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
-        hitdata=View_TodayTicks()
-        hitdata.Run()
+        #hitdata=View_TodayTicks()
+        #hitdata.Run()
         dd=Run_Bll_HisData()
         dd.Run_Insert_Historical_Data()
         #df = ts.get_stock_basics()

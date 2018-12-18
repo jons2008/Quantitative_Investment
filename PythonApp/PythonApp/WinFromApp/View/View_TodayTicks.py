@@ -9,11 +9,11 @@ class View_TodayTicks():
         i=0
         count=int(len(df)/5)
         # 创建新线程
-        thread1 = Thread_Bll_TodayTicks(df.index[0:count])
-        thread2 = Thread_Bll_TodayTicks(df.index[count:count*2])
-        thread3 = Thread_Bll_TodayTicks(df.index[count*2:count*3])
-        thread4 = Thread_Bll_TodayTicks(df.index[count*3:count*4])
-        thread5 = Thread_Bll_TodayTicks(df.index[count*4:])
+        thread1 = Thread_Bll_TodayTicks(df.index[0:count],"T1")
+        thread2 = Thread_Bll_TodayTicks(df.index[count:count*2],"T2")
+        thread3 = Thread_Bll_TodayTicks(df.index[count*2:count*3],"T3")
+        thread4 = Thread_Bll_TodayTicks(df.index[count*3:count*4],"T4")
+        thread5 = Thread_Bll_TodayTicks(df.index[count*4:],"T5")
 
         # 开启新线程
         thread1.start()
