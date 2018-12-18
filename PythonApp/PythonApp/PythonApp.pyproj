@@ -22,9 +22,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="module1.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Update_Data\BLL\Bll_HisData.py" />
     <Compile Include="Update_Data\BLL\Bll_HistoricalIndex.py" />
     <Compile Include="Update_Data\BLL\Bll_PerformanceReport.py" />
@@ -56,6 +53,10 @@
     <Compile Include="WinFromApp\OpenFrom.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WinFromApp\View\View_TodayTicks.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinFromApp\View\__init__.py" />
     <Compile Include="WinFromApp\__init__.py">
       <SubType>Code</SubType>
     </Compile>
@@ -71,6 +72,7 @@
     <Folder Include="Update_Data\DLL\HistoricalData\" />
     <Folder Include="Update_Data\BLL\" />
     <Folder Include="WinFromApp\" />
+    <Folder Include="WinFromApp\View\" />
     <Folder Include="量化交易文件\" />
     <Folder Include="New\" />
   </ItemGroup>

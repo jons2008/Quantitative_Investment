@@ -1,4 +1,5 @@
 import sys
+from WinFromApp.View.View_TodayTicks import View_TodayTicks
 from Update_Data.BLL.Bll_TodayTicks import Bll_TodayTicks
 from Update_Data.BLL.Bll_HisData import Run_Bll_HisData
 from Ui_WindowsFrom import MainWinFrom
@@ -14,10 +15,11 @@ class MainFrom(QMainWindow,Ui_MainWindow):
         ##查询当前所有正常上市交易的股票列表
         #
         #data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
-        hitdata=Bll_TodayTicks()
-        df = ts.get_stock_basics()
-        for stock in df.index:
-            hitdata.Insert_Historical_Data(stock,str(time.strftime("%Y-%m-%d", time.localtime()) ))
+        hitdata=View_TodayTicks()
+        hitdata.Run()
+        #df = ts.get_stock_basics()
+        #for stock in df.index:
+        #    hitdata.Insert_Historical_Data(stock,str(time.strftime("%Y-%m-%d", time.localtime()) ))
         #历史指数
         #bll=Bll_PerformanceReport()
         #bll.Insert_Historical_Data(2016,1)

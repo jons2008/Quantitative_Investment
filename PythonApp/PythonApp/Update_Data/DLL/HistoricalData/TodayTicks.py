@@ -12,6 +12,14 @@ PASSWORD = "123456789"
 
 connect_info = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8'.format(USERNAME,PASSWORD,HOSTNAME,PORT,DATABASE)  #1
 engine = create_engine(connect_info)
+HOSTNAME = "localhost"
+PORT = "3306"
+DATABASE = "stock_today_ticks"
+USERNAME = "root"
+PASSWORD = "123456789"
+
+connect_info = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8'.format(USERNAME,PASSWORD,HOSTNAME,PORT,DATABASE)  #1
+engine = create_engine(connect_info)
 class TodayTicks():
     def __init__(self,parent=None):
         pass
@@ -56,12 +64,13 @@ class TodayTicks():
        while (Is_While):
            try:
                mydb = pymysql.connect(HOSTNAME,USERNAME,PASSWORD,DATABASE)
-               df = ts.get_today_ticks(code)
+               #time.sleep(1)
+               df = ts.get_today_ticks(code,retry_count=5)
                if len(df)!=0:
                    df['data']=time.strftime("%Y-%m-%d", time.localtime()) 
                    mycursor = mydb.cursor()
                    for index, row in df.iterrows():
-                        sql = "INSERT INTO `stock_today_ticks`.`TODAY_TICKS_300152` (`date`,`time`,`price`,`pchange`,`change`,`volume`,`amount`,`type`)"
+                        sql = "INSERT INTO `stock_today_ticks`.`TODAY_TICKS_"+code+"` (`date`,`time`,`price`,`pchange`,`change`,`volume`,`amount`,`type`)"
                         sql = sql+"VALUES('"+str(row["data"])+"'"
                         sql = sql+",'"+str(row["time"])+"'"
                         sql = sql+",'"+str(row["price"])+"'"
@@ -83,3 +92,17 @@ class TodayTicks():
            finally:
                mydb.close()
                pass
+    def Select(self,code,date):
+        result=""
+        try:
+            mydb = pymysql.connect(HOSTNAME,USERNAME,PASSWORD,DATABASE)
+            mycursor = mydb.cursor()
+            sql = "SELECT * FROM TODAY_TICKS_"+code+" WHERE DATE='"+str(date)+"'"
+            mycursor.execute(sql)
+            result=mycursor.fetchall() 
+        except:
+            mydb.rollback()
+        finally:
+            mydb.close()
+            return result
+            pass
