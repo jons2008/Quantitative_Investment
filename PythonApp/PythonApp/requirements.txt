@@ -7,7 +7,7 @@ azure-storage==0.36.0
 backcall==0.1.0
 bcolz==1.2.1
 beautifulsoup4==4.6.3
-bottle==0.12.13
+bottle==0.12.19
 bs4==0.0.1
 certifi==2018.10.15
 cffi==1.11.5
